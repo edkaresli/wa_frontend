@@ -1,0 +1,28 @@
+
+
+.locationForcast {
+    display: flex;
+    flex-direction: row; 
+    margin-top: 20px;
+    background-color: azure;    
+}
+
+.locationForcast h4 {
+    color: #067ca0;
+}
+
+.locationForcast h5 {
+    color: #067ca0;
+    font-size: 12px;
+}
+
+.locationForcast ul {
+    display: flex;
+    flex-direction: row;
+    font-size: 10px;
+    list-style-type: none;
+}
+
+.locationForcast ul li {
+    margin-left: 20px;
+}
