@@ -69,7 +69,7 @@ class MainContent extends React.Component {
       // el.classList = "locationForcast";
       // document.getElementById("searchResults").appendChild(el);
     }
-    return allElements;
+    return (allElements);
    
     /*
     let city = this.state.allForcasts[0].city;
@@ -136,13 +136,13 @@ class MainContent extends React.Component {
 
   render() {
     return(
-      <div>
+      <>
         <div>
           <input type="text" name="search" placeholder="Search for location"/> 
           <button type="button" name="button" value="getWeather" onClick={this.handleClick}>Get Weather</button>        
         </div>
         <this.renderForcast/>
-      </div>
+      </>
     );
   }
 }
