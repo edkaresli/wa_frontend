@@ -7,8 +7,11 @@
 }
 
 .location-style h3, h4 {
-    color: #067ca0;
-    margin-left: 20px;
+    color: #067ca0;   
+}
+
+.location-style h4 {    
+    margin-left: 5px;
 }
 
 .location-style ul {
