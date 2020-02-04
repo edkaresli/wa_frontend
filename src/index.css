@@ -21,14 +21,14 @@ h1, p {
   
 }
 
-header { 
+/* header { 
   display: flex;
   flex-direction: row;
   flex: auto;
   background-color: #343434;
   justify-content: space-between;
   align-items: center;
-}
+} */
 
 .logo {
   margin-left: 10%;

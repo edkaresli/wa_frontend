@@ -1,4 +1,6 @@
 import React from 'react';
+import Forcast from './Forcast';
+
 import '../components/MainContent.css'; 
 
 class MainContent extends React.Component {
@@ -8,20 +10,17 @@ class MainContent extends React.Component {
     this.state = { allForcasts: [] , modified: false };
     this.handleClick = this.handleClick.bind(this);
     this.renderForcast = this.renderForcast.bind(this);
-    this.createForcast = this.createForcast.bind(this);
   } 
-
-  createForcast(forcast) {
-    let city = forcast.city;
-    let date = new Date();
-    let time = date.getHours() + ':' + date.getMinutes();  
-    let LIs = '';
-    let element = `      
-        <div>
-          <h4>${city}</h4> <br />
-          <span>${time}</span>
-        </div>
-        <ul>`;
+  
+  // A function that extracts data from a raw forcast and returns 
+  // an object that contains the city name, the time and a 6-elements array
+  // that contains a 6-days forecast details. 
+  // These details to be handed down to a <Forcast /> component.  
+  createForcast = (forcast) => {
+    const city = forcast.city;     
+    const time_now = forcast.time_now;
+    let forcastDays = [];  
+    
     for (let i = 0; i < forcast.consolidated_weather.length; i++) {
       const date_of_forcast = forcast.consolidated_weather[i].applicable_date;
       const max_temp = Math.round(forcast.consolidated_weather[i].max_temp);
@@ -29,105 +28,65 @@ class MainContent extends React.Component {
       const now_temp = i === 0 ? Math.round(forcast.consolidated_weather[i].the_temp) : '';
       const weather_state_name = forcast.consolidated_weather[i].weather_state_name;
       const weather_state_abbr = forcast.consolidated_weather[i].weather_state_abbr;
-      
-      LIs += `<li key=${(date.getSeconds()+i).toString()}>` + `<h5>${date_of_forcast}</h5><br />` + `<img src="` + `https://www.metaweather.com/static/img/weather/${weather_state_abbr}.svg" width=60 height=60> <br />${weather_state_name} <br />
-        Max: ${max_temp} &#8451;<br />
-        Min: ${min_temp} &#8451;<br />`;
-      if(i === 0) {
-        LIs += `Now: ${now_temp} &#8451;` + '</li>';  
-      }
-      else {
-        LIs += '</li>'
-      }        
+     
+      forcastDays.push({date_of_forcast, max_temp, min_temp, now_temp, weather_state_name, weather_state_abbr});
     }
-    element += LIs + `</ul>`;
 
-    return element;
+    return {city, time_now, forcastDays};
   }
-
+ 
+  createForcastComponent = (data) => {
+    return (<Forcast key={Math.floor(Math.random() * 100)} city={data.city} time={data.time_now} forcastDays={data.forcastDays}/>) 
+  } 
+  
   renderForcast() {
-    if(this.state.allForcasts.length < 1)
-      return (<h3>No forcasts yet</h3>); 
     
-    // let node = document.getElementById("searchResults");
-    // let list = node.children;
-    // for(let i = 0; i < list.length; i++) {
-    //   node.removeChild(list[list.length - 1 - i]);
-    // }
-    /*
-    while(node.hasChildNodes()) {
-      node.removeChild(node.childNodes[0]);
-    }    
-    */
-    let allElements = [];
+    let components = [];
     for(let i = 0; i < this.state.allForcasts.length; i++) {
-      let forcastElement = `<div>${this.createForcast(this.state.allForcasts[i])}</div>`; 
-
-      allElements.push(forcastElement);
-      // let el = document.createElement('DIV');
-      // el.innerHTML = forcastElement;
-      // el.classList = "locationForcast";
-      // document.getElementById("searchResults").appendChild(el);
-    }
-    return (allElements);
-   
-    /*
-    let city = this.state.allForcasts[0].city;
-    let date = new Date();
-    let time = date.getHours() + ':' + date.getMinutes();
-    let element = `      
-        <div>
-          <h4>${city}</h4> <br />
-          <span>${time}</span>
-        </div>
-        <ul>`;
-    let LIs = ''; 
-    for (let i = 0; i < this.state[0].consolidated_weather.length; i++) {
-      const date_of_forcast = this.state[0].consolidated_weather[i].applicable_date;
-      const max_temp = Math.round(this.state[0].consolidated_weather[i].max_temp);
-      const min_temp = Math.round(this.state[0].consolidated_weather[i].min_temp);
-      const now_temp = i === 0 ? Math.round(this.state[0].consolidated_weather[i].the_temp) : '';
-      const weather_state_name = this.state[0].consolidated_weather[i].weather_state_name;
-      const weather_state_abbr = this.state[0].consolidated_weather[i].weather_state_abbr;
-      
-      LIs += '<li>' + `<h5>${date_of_forcast}</h5><br />` + `<img src="` + `https://www.metaweather.com/static/img/weather/${weather_state_abbr}.svg" width=60 height=60> <br />${weather_state_name} <br />
-        Max: ${max_temp} &#8451;<br />
-        Min: ${min_temp} &#8451;<br />`;
-      if(i === 0) {
-        LIs += `Now: ${now_temp} &#8451;` + '</li>';  
-      }
-      else {
-        LIs += '</li>'
-      }        
-    }
-
-    element += LIs + `</ul>`;
-    */
+      let forcastProps = this.createForcast(this.state.allForcasts[i]); 
         
+      components.push(this.createForcastComponent(forcastProps));      
+    }
+
+    return components;     
   }
-    
+  
+  // componentDidMount() {
+  //   if(this.forcasts.length > 3)
+  //   {
+  //     this.forcasts.shift();            
+  //   }
+  //   this.setState({allForcasts: this.forcasts});
+  // }
+
   handleClick(event) {
    // event.preventDefault();
     
     let el = document.querySelector("input[type='text']");
+    if (el.value === '')
+      return;
+
     let locName = el.value;    
-    // let fiveDaysForecast = [];
-    console.log(locName);
-    // let res = {};
     
-    // let woeid = '';
+    console.log(locName);
+    
     const url = `http://localhost:5000/forcasts/${locName}/`;    
     fetch(url)
       .then(response => { return response.json(); })
         .then(data => { 
-         // console.log("Data from server: ", data); 
-          if(this.forcasts.length > 5)
-          {
-            this.forcasts.pop();            
+         // console.log("Data from server: ", data);           
+          
+          const date = new Date();
+          const time_now = date.getHours() + ':' + date.getMinutes();
+          
+          this.forcasts.push({ city: locName, time_now , consolidated_weather: data.consolidated_weather});
+          
+          if(this.forcasts.length > 3) {
+            this.forcasts.shift();            
           }
-          this.forcasts.push({ city: locName, consolidated_weather: data.consolidated_weather});
+
           this.setState({allForcasts: this.forcasts});          
-         // console.log("this.state: ", this.state.allForcasts)
+          // console.log("this.state: ", this.state.allForcasts)
         })
           .catch(err => {
             console.log(err);
@@ -135,14 +94,19 @@ class MainContent extends React.Component {
   }    
 
   render() {
-    return(
-      <>
+    console.log("this.state.allForcasts: ", this.state.allForcasts);
+    const allComponents = this.renderForcast();
+    return(      
+      <div>
         <div>
-          <input type="text" name="search" placeholder="Search for location"/> 
-          <button type="button" name="button" value="getWeather" onClick={this.handleClick}>Get Weather</button>        
+          <input className="text_input" type="text" name="search" placeholder="Search for location"/> 
+          <button className="button" type="button" name="button" value="getWeather" onClick={this.handleClick}>Get Weather</button>        
         </div>
-        <this.renderForcast/>
-      </>
+        <div className="all-forcasts">          
+          { (this.state.allForcasts === undefined || this.state.allForcasts.length < 1) && (<h3>No forcasts to show</h3>)}
+          {(this.state.allForcasts && this.state.allForcasts.length >= 1) && (allComponents.map(item => {return item;} ))}          
+        </div>                     
+      </div>
     );
   }
 }
